@@ -6,7 +6,7 @@ from threading import Semaphore
 import config
 
 def main(calibration_needed=False):
-    # Define the video sources for the trackers test
+    # Define the video sources for the trackers test 1 
 
     camera_list = get_cameras_list()
     sources_list = get_sources()

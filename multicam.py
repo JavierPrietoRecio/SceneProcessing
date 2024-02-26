@@ -82,7 +82,7 @@ def run_tracker_in_thread(source, stream_id, max_occupation, save=False, show=Fa
 
         frame = cv2.resize(frame, frame_size, interpolation=cv2.INTER_LINEAR)
 
-        # Run YOLOv8 tracking on the frame, persisting tracks between frames
+        # Run YOLOv8 tracking on the frame, persisting tracks between frames 1
         result_generator = model.track(frame,
                                        persist=True,
                                        verbose=False,
