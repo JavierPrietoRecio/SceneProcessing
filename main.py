@@ -2,9 +2,11 @@ import threading
 from multicam import *
 from camera_functions import *
 from calibrator import *
+from threading import Semaphore
+import config
 
 def main(calibration_needed=False):
-    # Define the video sources for the trackers
+    # Define the video sources for the trackers test
 
     camera_list = get_cameras_list()
     sources_list = get_sources()
@@ -14,19 +16,19 @@ def main(calibration_needed=False):
     sources_list = ['TestVideos/Inetum_cam1.mov',
                    'TestVideos/Inetum_cam2.mov']
     camera_list = sources_list
-    #############################################
+    ############################################# 
 
     tracker_threads = []
-
+    semaforo = Semaphore(1)
     interval = 20  # frames
     mean_framed_pax = {}
 
     def count_people_thread(camera_list):
-        global mean_framed_pax
+        
         total_people = 0
         while True:
             for camera in camera_list:
-                total_people += mean_framed_pax[camera]
+                total_people += config.mean_framed_pax[camera]
         print('a')
         print(total_people)
 

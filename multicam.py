@@ -1,5 +1,6 @@
 from collections import defaultdict
 import threading
+from threading import Semaphore
 from datetime import datetime
 import numpy as np
 import math
@@ -9,6 +10,7 @@ import cv2
 import pandas as pd
 from ultralytics import YOLO
 from calibrator import *
+import config
 # from alerts import KafkaMessager
 
 # kfk = KafkaMessager()
@@ -36,12 +38,12 @@ def run_tracker_in_thread(source, stream_id, max_occupation, save=False, show=Fa
         Allow show multiple windows:
         https://nrsyed.com/2018/07/05/multithreading-with-opencv-python-to-improve-video-processing-performance/
     """
-    
+    semaforo = Semaphore(1)
+
     track_history = defaultdict(lambda: [])
     track_history_warped = defaultdict(lambda: [])
     pax_history = []
     interval = 90
-    global mean_framed_pax
 
     model = YOLO('Models/yolov8n-pose.pt')
 
@@ -99,7 +101,9 @@ def run_tracker_in_thread(source, stream_id, max_occupation, save=False, show=Fa
             if len(pax_history) > interval:
                 pax_history.pop(0)
                 avg_pax_history = sum(pax_history)/interval
-                mean_framed_pax[stream_id] = avg_pax_history
+                semaforo.acquire()               
+                config.mean_framed_pax[stream_id] = avg_pax_history
+                semaforo.release()
             if pax_framed > max_occupation:
                 # kfk.send_message(stream_id, 'MAX_OCCUPATION', datetime.now())
                 continue
